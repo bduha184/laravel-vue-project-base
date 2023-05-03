@@ -4,6 +4,8 @@ services:
     build: ./backend/infra/app
     volumes:
       - .:/app
+    depends_on:
+      - db
   nginx:
     container_name: nginx
     image: nginx
@@ -30,7 +32,6 @@ services:
     volumes:
       - ./backend/infra/db/data:/var/lib/mysql
       - ./backend/infra/db/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./backend/infra/db/sql:/docker-entrypoint-initdb.d
     ports:
       - ${DB_PORT}:5432
 
@@ -40,11 +41,11 @@ services:
       - db
     environment:
       - PMA_ARBITRARY=1
-      - PMA_HOSTS=${DB_NAME}
+      - PMA_HOST=${DB_HOST}
       - PMA_USER=${DB_USER}
       - PMA_PASSWORD=${DB_PASSWORD}
     ports:
-      - "3000:81"
+      - 40080:80
     volumes:
       - ./backend/infra/phpmyadmin/sessions:/sessions
 
